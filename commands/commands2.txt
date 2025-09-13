@@ -1,0 +1,166 @@
+# Build a Docker image (tagged for DockerHub)
+docker build -t <dockerhub-username>/jobms:latest .
+
+# List all local images
+docker images
+
+# Tag an existing image (re-tag local image for DockerHub)
+docker tag jobms:latest <dockerhub-username>/jobms:latest
+
+# Remove an image
+docker rmi jobms:latest
+
+
+# Run a container in background mode
+docker run -d --name jobms -p 8080:8080 <dockerhub-username>/jobms:latest
+
+# List running containers
+docker ps
+
+# List all containers (including stopped)
+docker ps -a
+
+# Stop a running container
+docker stop jobms
+
+# Remove a stopped container
+docker rm jobms
+
+
+# Login to DockerHub
+docker login
+
+# Push image to DockerHub
+docker push <dockerhub-username>/jobms:latest
+
+# Pull image from DockerHub
+docker pull <dockerhub-username>/jobms:latest
+
+
+
+# Start a minikube cluster
+minikube start
+
+# Stop the cluster
+minikube stop
+
+# Delete cluster
+minikube delete
+
+# Get the IP of the minikube cluster
+minikube ip
+
+# Expose a service and open in browser
+minikube service job
+
+# List all services running
+minikube service list
+
+# Open minikube dashboard
+minikube dashboard
+
+
+# Get cluster info
+kubectl cluster-info
+
+# Show all resources in the cluster
+kubectl get all
+
+# Show resources in all namespaces
+kubectl get all --all-namespaces
+
+
+# List pods
+kubectl get pods
+
+# Describe a specific pod
+kubectl describe pod <pod-name>
+
+# View pod logs
+kubectl logs <pod-name>
+
+# Exec into a pod
+kubectl exec -it <pod-name> -- bash
+
+
+# List deployments
+kubectl get deployments
+
+# Describe a deployment
+kubectl describe deployment job
+
+# Restart deployment
+kubectl rollout restart deployment job
+
+# Update deployment with new image
+kubectl set image deployment/job job=<dockerhub-username>/jobms:latest --record
+
+# Delete a deployment
+kubectl delete deployment job
+
+
+# List services
+kubectl get svc
+
+# Describe service
+kubectl describe svc job
+
+# Delete service
+kubectl delete svc job
+
+
+# List ConfigMaps
+kubectl get configmaps
+
+# View a ConfigMap
+kubectl describe configmap mysql-config
+
+# Create ConfigMap from file
+kubectl create configmap mysql-initdb-config --from-file=init.sql
+
+# Delete a ConfigMap
+kubectl delete configmap mysql-initdb-config
+
+# List Secrets
+kubectl get secrets
+
+
+# List PersistentVolumeClaims
+kubectl get pvc
+
+# List PersistentVolumes
+kubectl get pv
+
+
+# Apply a YAML file
+kubectl apply -f deployment.yaml
+
+# Apply all YAMLs in a folder
+kubectl apply -f k8s/
+
+# Delete resources from a YAML
+kubectl delete -f deployment.yaml
+
+
+# Get running pods with labels
+kubectl get pods --show-labels
+
+# Follow logs of a pod
+kubectl logs -f <pod-name>
+
+# Delete pods by label (forces redeploy)
+kubectl delete pod -l app=job
+
+
+# Maven build
+mvn clean package -DskipTests
+
+# Docker build
+docker build -t <dockerhub-username>/jobms:latest .
+
+# Docker push
+docker push <dockerhub-username>/jobms:latest
+
+# Update image in Kubernetes
+kubectl set image deployment/job job=<dockerhub-username>/jobms:latest --record
+

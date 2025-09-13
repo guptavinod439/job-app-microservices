@@ -1,0 +1,81 @@
+./mvnw spring-boot:build-image -Dspring-boot.build-image.imageName=dcode007/jobappimage
+./mvnw spring-boot:build-image "-Dspring-boot.build-image.imageName=<dockerhub-username>/jobappimage"
+
+
+# Re-tag local jobms:latest into your DockerHub namespace
+docker tag jobms:latest <dockerhub-username>/jobms:latest
+
+# Push it
+docker push <dockerhub-username>/jobms:latest
+
+
+docker push jobappimage:latest
+
+docker tag jobappimage:latest dcodex/jobappimage:latest
+
+docker tag dcodex/jobappimage:latest <dockerhub-username>/jobappimage:latest
+
+./mvnw spring-boot:build-image -Dspring-boot.build-image.imageName=<dockerhub-username>/jobappimage \
+-Dspring-boot.build-image.builder=paketobuildpacks/builder-noble-java-tiny
+
+
+.\mvnw spring-boot:build-image "-Dspring-boot.build-image.imageName=<dockerhub-username>/jobappimage" "-Dspring-boot.build-image.builder=paketobuildpacks/builder-noble-java-tiny"
+
+
+# Build the image
+docker build -t <dockerhub-username>/jobappimage:latest .
+
+# Login to Docker Hub
+docker login
+
+# Push the image
+docker push <dockerhub-username>/jobappimage:latest
+
+docker run -d --name jobappcontainer -p 8080:8080 <dockerhub-username>/jobappimage:latest
+docker stop jobappcontainer
+docker rm jobappcontainer
+
+wsl -d docker-desktop ip addr show eth0
+
+
+docker exec -it jobapp-mysql mysql -u jobuser -p
+# enter password: jobpass
+SHOW DATABASES;
+
+
+docker build -t <dockerhub-username>/servicereg:latest .
+docker run -d --name servicereg -p 8761:8761 <dockerhub-username>/servicereg:latest
+
+docker build -t <dockerhub-username>/config-server-ms:latest .
+docker run -d --name config-server-ms -p 8083:8083 <dockerhub-username>/config-server-ms:latest
+
+docker build -t <dockerhub-username>/jobms:latest .
+docker run -d --name job -p 8080:8080 <dockerhub-username>/jobms:latest
+
+docker build -t <dockerhub-username>/companyms:latest .
+docker run -d --name company -p 8080:8080 <dockerhub-username>/companyms:latest
+
+docker build -t <dockerhub-username>/gateway-ms:latest .
+docker run -d --name gateway -p 8080:8080 <dockerhub-username>/gateway-ms:latest
+
+docker build -t <dockerhub-username>/reviewms:latest .
+docker run -d --name gateway -p 8080:8080 <dockerhub-username>/reviewms:latest
+
+docker push <dockerhub-username>/jobms:latest
+docker push <dockerhub-username>/companyms:latest
+docker push <dockerhub-username>/reviewms:latest
+
+kubectl create configmap mysql-initdb-config --from-file=init.sql --dry-run=client -o yaml | kubectl apply -f -
+kubectl exec -it mysql-0 -- mysql -u vinod -p
+
+kubectl delete statefulset mysql
+kubectl delete pvc mysql-data-mysql-0
+kubectl apply -f statefulset.yaml
+kubectl describe configmap mysql-initdb-config
+
+
+kubectl rollout restart deployment job
+kubectl rollout status deployment job
+kubectl logs -f deployment/job
+
+kubectl describe pod job | grep -i image
